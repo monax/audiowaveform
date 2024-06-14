@@ -115,7 +115,6 @@ class WaveformBuffer
         bool saveAsText(const char* filename, int bits = 16) const;
         bool saveAsJson(const char* filename, int bits = 16) const;
 
-    private:
         void save(std::ostream& stream, int bits) const;
         void saveAsText(std::ostream& stream, int bits) const;
         void saveAsJson(std::ostream& stream, int bits) const;

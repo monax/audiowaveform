@@ -71,7 +71,8 @@ Options::Options() :
     amplitude_scale_(1.0),
     png_compression_level_(-1), // default
     raw_sample_rate_(0),
-    raw_channels_(0)
+    raw_channels_(0),
+    server_mode_(false)
 {
 }
 
@@ -268,6 +269,13 @@ bool Options::parseCommandLine(int argc, const char* const* argv)
         "format for raw audio input "
         "(s8, u8, s16le, s16be, s24le, s24be, s32le, s32be, "
         "f32le, f32be, f64le, f64be)"
+    )(
+        "server",
+        "run in server mode"
+    )(
+        "port,p",
+        po::value<int>(&server_port_)->default_value(5040),
+        "port to listen on (default 5040)"
     );
 
     po::variables_map variables_map;
@@ -279,6 +287,7 @@ bool Options::parseCommandLine(int argc, const char* const* argv)
 
         help_    = variables_map.count("help") != 0;
         version_ = variables_map.count("version") != 0;
+        server_mode_ = hasOptionValue(variables_map, "server");
 
         if (help_ || version_) {
             return true;
@@ -324,9 +333,18 @@ bool Options::parseCommandLine(int argc, const char* const* argv)
         bool has_raw_channels    = hasOptionValue(variables_map, "raw-channels");
         bool has_raw_format      = hasOptionValue(variables_map, "raw-format");
 
-        if (input_filename_.empty() && !has_input_format_) {
-            reportError("Must specify either input filename or input format");
+        if (input_filename_.empty() && !has_input_format_ && !server_mode_) {
+            reportError("Must specify either input filename, input format or start in server mode");
             return false;
+        }
+
+        if (input_filename_.empty() && server_mode_) {
+            reportError("Must specify input dir for server mode");
+            return false;
+        }
+
+        if(server_mode_ && !input_filename_.empty()) {
+            return true;
         }
 
         input_format_ = has_input_format_ ?
