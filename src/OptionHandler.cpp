@@ -30,6 +30,7 @@
 #include "FileFormat.h"
 #include "FileUtil.h"
 #include "GdImageRenderer.h"
+#include "HttpServer.h"
 #include "Mp3AudioFileReader.h"
 #include "Log.h"
 #include "Options.h"
@@ -687,6 +688,12 @@ bool OptionHandler::run(const Options& options)
     }
 
     setLogLevel(options.getQuiet());
+
+    if(options.serverMode()) {
+        HttpServer httpServer{};
+        httpServer.run();
+        return true;
+    }
 
     bool success = true;
 

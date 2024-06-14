@@ -130,6 +130,8 @@ class Options
 
         void reportError(const std::string& message) const;
 
+        bool serverMode() const {return server_mode_;}
+
     private:
         void handleAmplitudeScaleOption(const std::string& option_value);
         void handleZoomOption(const std::string& option_value);
@@ -198,6 +200,8 @@ class Options
         int raw_sample_rate_;
         int raw_channels_;
         std::string raw_format_;
+
+        bool server_mode_;
 };
 
 //------------------------------------------------------------------------------

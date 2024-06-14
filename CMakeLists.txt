@@ -261,6 +261,7 @@ set(MODULES
     src/WavFileWriter.cpp
     src/madlld-1.1p1/bstdfile.c
     src/pdjson/pdjson.c
+    src/HttpServer.cpp
 )
 
 set(SRCS
