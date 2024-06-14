@@ -131,6 +131,7 @@ class Options
         void reportError(const std::string& message) const;
 
         bool serverMode() const {return server_mode_;}
+        int getServerPort() const {return server_port_;}
 
     private:
         void handleAmplitudeScaleOption(const std::string& option_value);
@@ -202,6 +203,7 @@ class Options
         std::string raw_format_;
 
         bool server_mode_;
+        int server_port_;
 };
 
 //------------------------------------------------------------------------------

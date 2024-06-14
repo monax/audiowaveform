@@ -272,6 +272,10 @@ bool Options::parseCommandLine(int argc, const char* const* argv)
     )(
         "server",
         "run in server mode"
+    )(
+        "port,p",
+        po::value<int>(&server_port_)->default_value(5040),
+        "port to listen on (default 5040)"
     );
 
     po::variables_map variables_map;
@@ -288,7 +292,6 @@ bool Options::parseCommandLine(int argc, const char* const* argv)
         if (help_ || version_) {
             return true;
         }
-
 
         quiet_ = variables_map.count("quiet") != 0;
 

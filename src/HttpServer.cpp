@@ -16,9 +16,6 @@
 #include "crow/crow_all.h"
 #include "WaveformBuffer.h"
 
-// TODO have these set by environment/command line params
-const int PORT = 5040;
-
 static std::unique_ptr<AudioFileReader> createAudioFileReader(
     const boost::filesystem::path& input_filename,
     const Options& options)
@@ -56,24 +53,31 @@ static std::unique_ptr<AudioFileReader> createAudioFileReader(
 
 void HttpServer::run(const Options& options) {
     std::cout << "Starting Http server" << std::endl;
+    std::cout << "Listening on port " << options.getServerPort() << std::endl;
     std::cout << "Media dir: " << options.getInputFilename() << std::endl;
 
     crow::SimpleApp app;
 
     CROW_ROUTE(app, "/generate-waveform-data/<string>")([this, &options](std::string filename){
-        std::ostringstream os;
-        auto result = generateWaveformData(filename, options, os);
-        if(result) {
-            return crow::response(os.str());
-        } else {
+        try {
+            std::ostringstream os;
+            auto result = generateWaveformData(filename, options, os);
+            if(result) {
+                return crow::response(os.str());
+            } else {
+                return crow::response(500);
+            }
+        } catch(...) {
+            // catch(...) isn't particularly good form - we should really be throwing & catching specific exceptions.
+            // That would mean updating the error handling throughout the rest of the app though, which I'm a bit
+            // loathe to do.
             return crow::response(500);
         }
     });
 
-    app.port(PORT).multithreaded().run();
+    app.port(options.getServerPort()).multithreaded().run();
 }
 
-// TODO: return json of waveform data
 bool HttpServer::generateWaveformData(std::string filename, const Options& options, std::ostream& outstream) {
     boost::filesystem::path fs_filename (filename);
     boost::filesystem::path src = options.getInputFilename() / fs_filename;
