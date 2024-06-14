@@ -48,7 +48,9 @@
 #include <boost/format.hpp>
 
 #include <cassert>
+#include <ostream>
 #include <string>
+#include <iostream>
 
 //------------------------------------------------------------------------------
 
@@ -691,7 +693,7 @@ bool OptionHandler::run(const Options& options)
 
     if(options.serverMode()) {
         HttpServer httpServer{};
-        httpServer.run();
+        httpServer.run(options);
         return true;
     }
 
@@ -717,6 +719,7 @@ bool OptionHandler::run(const Options& options)
                 output_filename,
                 options
             );
+            std::cout << "shouldConvertAudioFormat : " << success << std::endl;
         }
         else if (shouldGenerateWaveformData(input_format, output_format)) {
             success = generateWaveformData(
@@ -726,6 +729,7 @@ bool OptionHandler::run(const Options& options)
                 output_format,
                 options
             );
+            std::cout << "shouldGenerateWaveformData : " << success << std::endl;
         }
         else if (shouldConvertWaveformData(input_format, output_format, options)) {
             success = convertWaveformData(
@@ -735,6 +739,7 @@ bool OptionHandler::run(const Options& options)
                 output_format,
                 options
             );
+            std::cout << "shouldConvertWaveformData : " << success << std::endl;
         }
         else if (shouldRenderWaveformImage(input_format, output_format)) {
             success = renderWaveformImage(
@@ -743,6 +748,7 @@ bool OptionHandler::run(const Options& options)
                 output_filename,
                 options
             );
+            std::cout << "shouldRenderWaveformImage : " << success << std::endl;
         }
         else if (shouldResampleWaveformData(input_format, output_format, options)) {
             success = resampleWaveformData(
@@ -752,6 +758,7 @@ bool OptionHandler::run(const Options& options)
                 output_format,
                 options
             );
+            std::cout << "shouldResampleWaveformData : " << success << std::endl;
         }
         else {
             log(Error) << "Can't generate "

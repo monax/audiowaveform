@@ -285,7 +285,7 @@ bool Options::parseCommandLine(int argc, const char* const* argv)
         version_ = variables_map.count("version") != 0;
         server_mode_ = hasOptionValue(variables_map, "server");
 
-        if (help_ || version_ || server_mode_) {
+        if (help_ || version_) {
             return true;
         }
 
@@ -335,7 +335,12 @@ bool Options::parseCommandLine(int argc, const char* const* argv)
             return false;
         }
 
-        if(server_mode_) {
+        if (input_filename_.empty() && server_mode_) {
+            reportError("Must specify input dir for server mode");
+            return false;
+        }
+
+        if(server_mode_ && !input_filename_.empty()) {
             return true;
         }
 
